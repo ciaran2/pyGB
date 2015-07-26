@@ -5,6 +5,5 @@ class DummyMem:
     pass
 
 class RAM(DummyMem):
-
-  def __init__(this, min_addr, max_addr):
-    pass
+  def __init__(this, size):
+    this.mem = [0] * size
