@@ -1,7 +1,7 @@
-from GBmem import *
-from GBcartridge import *
+from gb.mem import *
+from gb.cartridge import *
 
-class GBmmu:
+class Mmu:
   def __init__(this, bios, vram, oam, io):
     this.wram = RAM(0xDFFF, 0xC000)
     this.zram = RAM(0xFFFF, 0xFF80)
@@ -74,42 +74,9 @@ class GBmmu:
     this.oam.clear()
 
     this.cartridge.eram.clear()
-  
+
   def load_cartridge(this, cartridge):
     this.cartridge = cartridge
 
   def unload_cartridge(this, cartridge):
     this.cartridge = DummyCartridge()
-
-if __name__ == '__main__':
-  test_mmu = GBmmu(DummyMem(), DummyMem(), DummyMem(), DummyMem())
-
-  print "bios:", test_mmu.device_select(0x0)
-  print "bios:", test_mmu.device_select(0xEE)
-  print
-  print "bank0:", test_mmu.device_select(0x100)
-  print "bank0:", test_mmu.device_select(0x0)
-  print "bank0:", test_mmu.device_select(0x3FFF)
-  print
-  print "bank1:", test_mmu.device_select(0x4000)
-  print "bank1:", test_mmu.device_select(0x7000)
-  print
-  print "vram:", test_mmu.device_select(0x8000)
-  print "vram:", test_mmu.device_select(0x9000)
-  print
-  print "eram:", test_mmu.device_select(0xA000)
-  print "eram:", test_mmu.device_select(0xB000)
-  print
-  print "wram:", test_mmu.device_select(0xC000)
-  print "wram:", test_mmu.device_select(0xD000)
-  print "wram:", test_mmu.device_select(0xE000)
-  print "wram:", test_mmu.device_select(0xF000)
-  print
-  print "oam:", test_mmu.device_select(0xFE00)
-  print "oam:", test_mmu.device_select(0xFE90)
-  print
-  print "io:", test_mmu.device_select(0xFF00)
-  print "io:", test_mmu.device_select(0xFF7F)
-  print
-  print "zram:", test_mmu.device_select(0xFF80)
-  print "zram:", test_mmu.device_select(0xFFFF)
