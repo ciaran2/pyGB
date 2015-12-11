@@ -1,7 +1,7 @@
-from GBmem import *
-from GBcartridge import *
+from gb.mem import *
+from gb.cartridge import *
 
-class GBmmu:
+class Mmu:
   def __init__(self, bios, vram, oam, io):
     self.wram = bytearray(0xE000 - 0xC000)
     self.zram = bytearray(0x10000 - 0xFF80)
@@ -75,42 +75,9 @@ class GBmmu:
     self.oam.clear()
 
     self.cartridge.eram.clear()
-  
+
   def load_cartridge(self, cartridge):
     self.cartridge = cartridge
 
   def unload_cartridge(self, cartridge):
     self.cartridge = DummyCartridge()
-
-if __name__ == '__main__':
-  test_mmu = GBmmu(DummyMem(), DummyMem(), DummyMem(), DummyMem())
-
-  print "bios:", test_mmu.addr_trans(0x0)
-  print "bios:", test_mmu.addr_trans(0xEE)
-  print
-  print "bank0:", test_mmu.addr_trans(0x100)
-  print "bank0:", test_mmu.addr_trans(0x0)
-  print "bank0:", test_mmu.addr_trans(0x3FFF)
-  print
-  print "bank1:", test_mmu.addr_trans(0x4000)
-  print "bank1:", test_mmu.addr_trans(0x7000)
-  print
-  print "vram:", test_mmu.addr_trans(0x8000)
-  print "vram:", test_mmu.addr_trans(0x9000)
-  print
-  print "eram:", test_mmu.addr_trans(0xA000)
-  print "eram:", test_mmu.addr_trans(0xB000)
-  print
-  print "wram:", test_mmu.addr_trans(0xC000)
-  print "wram:", test_mmu.addr_trans(0xD000)
-  print "wram:", test_mmu.addr_trans(0xE000)
-  print "wram:", test_mmu.addr_trans(0xF000)
-  print
-  print "oam:", test_mmu.addr_trans(0xFE00)
-  print "oam:", test_mmu.addr_trans(0xFE90)
-  print
-  print "io:", test_mmu.addr_trans(0xFF00)
-  print "io:", test_mmu.addr_trans(0xFF7F)
-  print
-  print "zram:", test_mmu.addr_trans(0xFF80)
-  print "zram:", test_mmu.addr_trans(0xFFFF)

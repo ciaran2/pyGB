@@ -1,4 +1,4 @@
-from GBmem import *
+from gb.mem import *
 
 class DummyCartridge:
 
