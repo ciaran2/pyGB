@@ -2,81 +2,82 @@ from gb.mem import *
 from gb.cartridge import *
 
 class Mmu:
-  def __init__(this, bios, vram, oam, io):
-    this.wram = RAM(0xDFFF, 0xC000)
-    this.zram = RAM(0xFFFF, 0xFF80)
+  def __init__(self, bios, vram, oam, io):
+    self.wram = bytearray(0xE000 - 0xC000)
+    self.zram = bytearray(0x10000 - 0xFF80)
 
-    this.bios = bios
-    this.vram = vram
-    this.oam = oam
-    this.io = io
+    self.bios = bios
+    self.vram = vram
+    self.oam = oam
+    self.io = io
 
-    this.cartridge = DummyCartridge()
+    self.cartridge = DummyCartridge()
 
-    this.in_bios = True
+    self.in_bios = True
 
-  def device_select(this, addr):
+  def addr_trans(self, addr):
     if addr < 0x0000 or addr > 0xFFFF:
       raise KeyError("Invalid memory address")
 
     dig1 = addr & 0xF000
 
-    if dig1 == 0x0000:
-      if this.in_bios:
+    if dig1 < 0x1000:
+      if self.in_bios:
         if addr < 0x0100:
-          return this.bios
+          return self.bios, addr
         elif addr == 0x0100:
-          this.in_bios = False
+          self.in_bios = False
 
-      return this.cartridge.rom0
+      return self.cartridge, addr
 
-    if dig1 >= 0x1000 and dig1 <= 0x3000:
-      return this.cartridge.rom0
+    elif dig1 < 0x4000:
+      return self.cartridge, addr
 
-    if dig1 >= 0x4000 and dig1 <= 0x7000:
-      return this.cartridge.rom1
+    if dig1 < 0x8000:
+      return self.cartridge, addr
 
-    if dig1 >= 0x8000 and dig1 <= 0x9000:
-      return this.vram
+    if dig1 < 0xA000:
+      return self.vram, (addr - 0x8000)
 
-    if dig1 >= 0xA000 and dig1 <= 0xB000:
-      return this.cartridge.eram
+    if dig1 < 0xC000:
+      return self.cartridge, (addr - 0xA000 + 0x8000)
 
-    if dig1 >= 0xC000 and dig1 <= 0xE000:
-      return this.wram
+    if dig1 < 0xF000:
+      return self.wram, (addr - 0xC000)
 
-    if dig1 == 0xF000:
+    else:
       dig2 = addr & 0x0F00
 
-      if dig2 >= 0x000 and dig2 <= 0xD00:
-        return this.wram
+      if dig2 < 0xE00:
+        return self.wram, (addr - 0xF000)
 
-      if dig2 == 0xE00:
-        return this.oam
+      elif dig2 == 0xE00:
+        return self.oam, (addr - 0xFE00)
 
-      if dig2 == 0xF00:
+      else:
         if addr >= 0xFF80:
-          return this.zram
+          return self.zram, (addr - 0xFF80)
         else:
-          return this.io
+          return self.io, (addr - 0xFF00)
 
-  def __getitem__(this, addr):
-    return this.device_select(addr)[addr]
+  def __getitem__(self, addr):
+    device, device_addr = self.addr_trans(addr)
+    return device[device_addr]
 
-  def __setitem__(this, addr, value):
-    this.device_select(addr)[addr] = value
+  def __setitem__(self, addr, value):
+    self.addr_trans(addr)[addr] = value
 
-  def reset(this):
-    this.wram.clear()
-    this.zram.clear()
+  def reset(self):
+    self.wram.clear()
+    self.zram.clear()
 
-    this.vram.clear()
-    this.oam.clear()
+    self.vram.clear()
+    self.oam.clear()
 
-    this.cartridge.eram.clear()
+    self.cartridge.eram.clear()
 
-  def load_cartridge(this, cartridge):
-    this.cartridge = cartridge
+  def load_cartridge(self, cartridge):
+    self.cartridge = cartridge
 
-  def unload_cartridge(this, cartridge):
-    this.cartridge = DummyCartridge()
+  def unload_cartridge(self, cartridge):
+    self.cartridge = DummyCartridge()

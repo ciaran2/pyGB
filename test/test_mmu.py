@@ -4,107 +4,107 @@ from gb.mmu import *
 
 class TestMmuMethods(unittest.TestCase):
 
-  def setUp(this):
-    this.mmu = Mmu(DummyMem(), DummyMem(), DummyMem(), DummyMem())
+  def setUp(self):
+    self.mmu = Mmu(DummyMem(), DummyMem(), DummyMem(), DummyMem())
 
-  def tearDown(this):
-    this.mmu = None
+  def tearDown(self):
+    self.mmu = None
 
-  def test_read_bios(this):
-    b1 = this.mmu.device_select(0x0)
-    b2 = this.mmu.device_select(0xEE)
+  def test_read_bios(self):
+    b1 = self.mmu.addr_trans(0x0)[0]
+    b2 = self.mmu.addr_trans(0xEE)[0]
 
-    this.assertEqual(b1, b2)
+    self.assertEqual(b1, b2)
 
-  def test_bios_end(this):
-    b1 = this.mmu.device_select(0x0)
-    b2 = this.mmu.device_select(0x100)
+  def test_bios_end(self):
+    b1 = self.mmu.addr_trans(0x0)[0]
+    b2 = self.mmu.addr_trans(0x100)[0]
 
-    this.assertNotEqual(b1, b2)
+    self.assertNotEqual(b1, b2)
 
-  def test_unloda_bios(this):
-    b1 = this.mmu.device_select(0x100)
-    b2 = this.mmu.device_select(0x0)
+  def test_unloda_bios(self):
+    b1 = self.mmu.addr_trans(0x100)[0]
+    b2 = self.mmu.addr_trans(0x0)[0]
 
-    this.assertEqual(b1, b2)
+    self.assertEqual(b1, b2)
 
-  def test_read_devices(this):
-    this.mmu.device_select(0x100)
+  def test_read_devices(self):
+    self.mmu.addr_trans(0x100)
 
-    bank0 = this.mmu.device_select(0x100)
-    bank0_0 = this.mmu.device_select(0x0)
-    bank0_1 = this.mmu.device_select(0x3FFF)
+    bank0 = self.mmu.addr_trans(0x100)[0]
+    bank0_0 = self.mmu.addr_trans(0x0)[0]
+    bank0_1 = self.mmu.addr_trans(0x3FFF)[0]
 
-    this.assertEqual(bank0, bank0_0)
-    this.assertEqual(bank0, bank0_1)
+    self.assertEqual(bank0, bank0_0)
+    self.assertEqual(bank0, bank0_1)
 
-    bank1_0 = this.mmu.device_select(0x4000)
-    bank1_1 = this.mmu.device_select(0x7000)
+    bank1_0 = self.mmu.addr_trans(0x4000)[0]
+    bank1_1 = self.mmu.addr_trans(0x7000)[0]
 
-    this.assertEqual(bank1_0, bank1_1)
-    this.assertNotEqual(bank1_0, bank0)
+    self.assertEqual(bank1_0, bank1_1)
+    self.assertEqual(bank1_0, bank0)
 
-    vram1 = this.mmu.device_select(0x8000)
-    vram2 = this.mmu.device_select(0x9000)
+    vram1 = self.mmu.addr_trans(0x8000)[0]
+    vram2 = self.mmu.addr_trans(0x9000)[0]
 
-    this.assertEqual(vram1, vram2)
-    this.assertNotEqual(vram1, bank0)
-    this.assertNotEqual(vram1, bank1_0)
+    self.assertEqual(vram1, vram2)
+    self.assertNotEqual(vram1, bank0)
+    self.assertNotEqual(vram1, bank1_0)
 
-    eram1 = this.mmu.device_select(0xA000)
-    eram2 = this.mmu.device_select(0xB000)
+    eram1 = self.mmu.addr_trans(0xA000)[0]
+    eram2 = self.mmu.addr_trans(0xB000)[0]
 
-    this.assertEqual(eram1, eram2)
-    this.assertNotEqual(eram1, bank0)
-    this.assertNotEqual(eram1, bank1_0)
-    this.assertNotEqual(eram1, vram1)
+    self.assertEqual(eram1, eram2)
+    self.assertEqual(eram1, bank0)
+    self.assertEqual(eram1, bank1_0)
+    self.assertNotEqual(eram1, vram1)
 
-    wram1 = this.mmu.device_select(0xC000)
-    wram2 = this.mmu.device_select(0xD000)
-    wram3 = this.mmu.device_select(0xE000)
-    wram4 = this.mmu.device_select(0xF000)
+    wram1 = self.mmu.addr_trans(0xC000)[0]
+    wram2 = self.mmu.addr_trans(0xD000)[0]
+    wram3 = self.mmu.addr_trans(0xE000)[0]
+    wram4 = self.mmu.addr_trans(0xF000)[0]
 
-    this.assertEqual(wram1, wram2)
-    this.assertEqual(wram1, wram3)
-    this.assertEqual(wram1, wram4)
+    self.assertEqual(wram1, wram2)
+    self.assertEqual(wram1, wram3)
+    self.assertEqual(wram1, wram4)
 
-    this.assertNotEqual(wram1, bank0)
-    this.assertNotEqual(wram1, bank1_0)
-    this.assertNotEqual(wram1, vram1)
-    this.assertNotEqual(wram1, eram1)
+    self.assertNotEqual(wram1, bank0)
+    self.assertNotEqual(wram1, bank1_0)
+    self.assertNotEqual(wram1, vram1)
+    self.assertNotEqual(wram1, eram1)
 
-    oam1 = this.mmu.device_select(0xFE00)
-    oam2 = this.mmu.device_select(0xFE90)
+    oam1 = self.mmu.addr_trans(0xFE00)[0]
+    oam2 = self.mmu.addr_trans(0xFE90)[0]
 
-    this.assertEqual(oam1, oam2)
+    self.assertEqual(oam1, oam2)
 
-    this.assertNotEqual(oam1, bank0)
-    this.assertNotEqual(oam1, bank1_0)
-    this.assertNotEqual(oam1, vram1)
-    this.assertNotEqual(oam1, eram1)
-    this.assertNotEqual(oam1, wram1)
+    self.assertNotEqual(oam1, bank0)
+    self.assertNotEqual(oam1, bank1_0)
+    self.assertNotEqual(oam1, vram1)
+    self.assertNotEqual(oam1, eram1)
+    self.assertNotEqual(oam1, wram1)
 
-    io1 = this.mmu.device_select(0xFF00)
-    io2 = this.mmu.device_select(0xFF7F)
+    io1 = self.mmu.addr_trans(0xFF00)[0]
+    io2 = self.mmu.addr_trans(0xFF7F)[0]
 
-    this.assertEqual(io1, io2)
+    self.assertEqual(io1, io2)
 
-    this.assertNotEqual(io1, bank0)
-    this.assertNotEqual(io1, bank1_0)
-    this.assertNotEqual(io1, vram1)
-    this.assertNotEqual(io1, eram1)
-    this.assertNotEqual(io1, wram1)
-    this.assertNotEqual(io1, oam1)
+    self.assertNotEqual(io1, bank0)
+    self.assertNotEqual(io1, bank1_0)
+    self.assertNotEqual(io1, vram1)
+    self.assertNotEqual(io1, eram1)
+    self.assertNotEqual(io1, wram1)
+    self.assertNotEqual(io1, oam1)
 
-    zram1 = this.mmu.device_select(0xFF80)
-    zram2 = this.mmu.device_select(0xFFFF)
+    zram1 = self.mmu.addr_trans(0xFF80)[0]
+    zram2 = self.mmu.addr_trans(0xFFFF)[0]
 
-    this.assertEqual(zram1, zram2)
+    self.assertEqual(zram1, zram2)
 
-    this.assertNotEqual(zram1, bank0)
-    this.assertNotEqual(zram1, bank1_0)
-    this.assertNotEqual(zram1, vram1)
-    this.assertNotEqual(zram1, eram1)
-    this.assertNotEqual(zram1, wram1)
-    this.assertNotEqual(zram1, oam1)
-    this.assertNotEqual(zram1, io1)
+    self.assertNotEqual(zram1, bank0)
+    self.assertNotEqual(zram1, bank1_0)
+    self.assertNotEqual(zram1, vram1)
+    self.assertNotEqual(zram1, eram1)
+    self.assertNotEqual(zram1, wram1)
+    self.assertNotEqual(zram1, oam1)
+    self.assertNotEqual(zram1, io1)
