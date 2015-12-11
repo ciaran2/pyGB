@@ -22,7 +22,7 @@ class TestMmuMethods(unittest.TestCase):
 
     self.assertNotEqual(b1, b2)
 
-  def test_unloda_bios(self):
+  def test_unload_bios(self):
     b1 = self.mmu.addr_trans(0x100)[0]
     b2 = self.mmu.addr_trans(0x0)[0]
 
