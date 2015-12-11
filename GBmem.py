@@ -1,9 +1,12 @@
 class DummyMem:
-  def __getitem__(this,addr):
+  def __getitem__(self,addr):
     return 0
-  def __setitem(this,addr,value):
+  def __setitem(self,addr,value):
     pass
 
-class RAM(DummyMem):
-  def __init__(this, size):
-    this.mem = [0] * size
+class ROM(DummyMem):
+  def __init__(self, data):
+    self.data = bytearray(data)
+
+  def __getitem__(self, addr):
+    return self.data[addr]
