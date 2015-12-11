@@ -16,4 +16,5 @@ setup(
   url = "http://github.com/ciaran2/pyGB/blob/master/LICENSE",
   long_description=read("README.md"),
   packages=["gb"],
+  test_suite="test",
 )
