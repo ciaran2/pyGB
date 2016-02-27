@@ -1,6 +1,6 @@
 from gb.mem import *
 
-class DummyCartridge:
+class DummyCartridge(object):
 
   def __init__(self):
     pass
@@ -12,7 +12,7 @@ class DummyCartridge:
     pass
 
 
-class MBC1Cartridge:
+class Mbc1Cartridge(object):
 
   ids = set(['\x01','\x02','\x03'])
 
@@ -22,12 +22,12 @@ class MBC1Cartridge:
     self.bankset_select = 0
     self.mode_select = 0
 
-    self.rombanks = [ROM(romstring[x:x+0x4000]) for x in xrange(0, len(romstring), 0x4000)]
+    self.rombanks = [Rom(romstring[x:x+0x4000]) for x in xrange(0, len(romstring), 0x4000)]
     self.rombanks.insert(32, self.rombanks[0])
     self.rombanks.insert(64, self.rombanks[0])
     self.rombanks.insert(96, self.rombanks[0])
     if len(self.rombanks) < 128:
-      self.rombanks = self.rombanks + [ROM(0x4000)] * (128 - len(self.rombanks))
+      self.rombanks = self.rombanks + [Rom(0x4000)] * (128 - len(self.rombanks))
     self.rambanks = 4 * [bytearray(8192)]
 
   def __getitem__(self, addr):
@@ -61,7 +61,7 @@ def load_rom_from_file(path):
 
   cart_type = romstring[0x147]
 
-  if cart_type in MBC1Cartridge.ids:
-    return MBC1Cartridge(romstring)
+  if cart_type in Mbc1Cartridge.ids:
+    return Mbc1Cartridge(romstring)
   else:
     raise ValueError("Cartridge of unsupported type.")
