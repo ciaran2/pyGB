@@ -50,13 +50,15 @@ class Cartridge(object):
       if not romstring:
         cls = DummyCartridge
       else:
+        # 2/3: convert to bytearry to ensure uniform indexing. Could also use
+        # six.indexbytes, but that doesn't work on existing bytearrays, so we would still
+        # need a conversion, and we might as well use python builtins if we can.
+        romstring = bytearray(romstring)
         if len(romstring) < ROM_TYPE_BYTE:
           raise ValueError(
             "Unable to read cartridge type: cartridge type located at byte %d, but "
             "romstring was only %d bytes long." % (ROM_TYPE_BYTE, len(romstring)))
-        # 2/3 evil index function which we have to use because Python 2 is evil and has
-        # "bytes" as an alias of "str" and indexing a "str" returns a 1 character "str".
-        cart_type = six.indexbytes(romstring, ROM_TYPE_BYTE)
+        cart_type = romstring[ROM_TYPE_BYTE]
 
         if cart_type in Cartridge._cartridge_registry:
           cls = Cartridge._cartridge_registry[cart_type]
