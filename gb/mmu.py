@@ -1,6 +1,7 @@
 from gb.mem import *
 from gb.cartridge import *
 
+
 class Mmu(object):
   def __init__(self, bios, vram, oam, io):
     self.wram = bytearray(0xE000 - 0xC000)
@@ -30,7 +31,7 @@ class Mmu(object):
 
       return self.cartridge, addr
 
-    elif dig1 < 0x4000:
+    if dig1 < 0x4000:
       return self.cartridge, addr
 
     if dig1 < 0x8000:

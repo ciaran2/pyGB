@@ -5,13 +5,16 @@ from gb.mem import *
 
 ROM_TYPE_BYTE = 0x147
 
+
 class CartridgeError(Exception):
   """Base exception for this module."""
   pass
 
+
 class RegistrationError(CartridgeError):
   """Error raised when a cartridge tries to register itself with an illegal state."""
   pass
+
 
 class CartridgeMeta(type):
   """Metaclass for cartridges, causing automatic registration of subclasses."""
@@ -32,6 +35,7 @@ class CartridgeMeta(type):
         cls._cartridge_registry[i] = cls
 
     super(CartridgeMeta, cls).__init__(name, bases, dct)
+
 
 @six.add_metaclass(CartridgeMeta)
 class Cartridge(object):
@@ -68,6 +72,7 @@ class Cartridge(object):
       raise ValueError("You have subclassed Cartridge incorrectly, somehow.")
 
     return super(Cartridge, cls).__new__(cls)
+
 
 class DummyCartridge(Cartridge):
 
@@ -109,12 +114,14 @@ class Mbc1Cartridge(Cartridge):
         self.rom_select + (1-self.mode_select)*(self.bankset_select << 5)][addr-0x4000]
     elif self.ram_enable == 0xA:
       return self.rambanks[self.mode_select * self.bankset_select][addr-0x8000]
+    else:
+      return 0
 
   def __setitem__(self, addr, value):
     if addr < 0x0 or addr > 0x9FFF:
       raise KeyError("Invalid cartridge memory address.")
     if addr < 0x2000:
-      self.ram_enable = 0xF & value
+      self.ram_enable = 0x0F & value
     elif addr < 0x4000:
       self.rom_select = 0x1F & value
       self.rom_select = 1 if self.rom_select == 0 else self.rom_select

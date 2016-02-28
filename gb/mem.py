@@ -4,6 +4,7 @@ class DummyMem(object):
   def __setitem(self,addr,value):
     pass
 
+
 class Rom(DummyMem):
   def __init__(self, data):
     self.data = bytearray(data)
