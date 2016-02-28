@@ -3,7 +3,7 @@ from six.moves import xrange
 
 from gb.mem import *
 
-ROM_TYPE_BYTES = 0x147
+ROM_TYPE_BYTE = 0x147
 
 class CartridgeError(Exception):
   """Base exception for this module."""
@@ -45,13 +45,13 @@ class Cartridge(object):
       if not romstring:
         cls = DummyCartridge
       else:
-        if len(romstring) < ROM_TYPE_BYTES:
+        if len(romstring) < ROM_TYPE_BYTE:
           raise ValueError(
             "Unable to read cartridge type: cartridge type located at byte %d, but "
-            "romstring was only %d bytes long." % (ROM_TYPE_BYTES, len(romstring)))
+            "romstring was only %d bytes long." % (ROM_TYPE_BYTE, len(romstring)))
         # 2/3 evil index function which we have to use because Python 2 is evil and has
         # "bytes" as an alias of "str" and indexing a "str" returns a 1 character "str".
-        cart_type = six.indexbytes(romstring, ROM_TYPE_BYTES)
+        cart_type = six.indexbytes(romstring, ROM_TYPE_BYTE)
 
         if cart_type in Cartridge._cartridge_registry:
           cls = Cartridge._cartridge_registry[cart_type]
@@ -120,8 +120,6 @@ class Mbc1Cartridge(Cartridge):
 
 def load_rom_from_file(path):
   with open(path, "rb") as f:
-    # 2/3: Python 2's "bytes" type is useless, so we have to use a bytearray to get the
-    # behavior we want.
     romstring = f.read()
 
   return Cartridge(romstring)

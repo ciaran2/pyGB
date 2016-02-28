@@ -11,7 +11,7 @@ class TestCartridge(unittest.TestCase):
             pass
         self.base = base
 
-        self.test_romstring = b"\x00" * 0x147 + b"\x01"
+        self.test_romstring = b"\x00" * ROM_TYPE_BYTE + b"\x01"
 
     def testCartridgeSelect(self):
         dummy_cartridge = Cartridge()
@@ -24,7 +24,7 @@ class TestCartridge(unittest.TestCase):
         with self.assertRaises(ValueError):
             Cartridge(b"not long enough")
         with self.assertRaises(ValueError):
-            Cartridge(b"\x00" * 0x147 + b"\xFF")
+            Cartridge(b"\x00" * ROM_TYPE_BYTE + b"\xFF")
         with self.assertRaises(ValueError):
             DummyCartridge()
 
