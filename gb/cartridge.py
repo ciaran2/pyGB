@@ -106,7 +106,7 @@ class Mbc1Cartridge(Cartridge):
       return self.rombanks[
         self.rom_select + (1-self.mode_select)*(self.bankset_select << 5)][addr-0x4000]
     elif self.ram_enable == 0xA:
-        return self.rambanks[self.mode_select * self.bankset_select][addr-0x8000]
+      return self.rambanks[self.mode_select * self.bankset_select][addr-0x8000]
 
   def __setitem__(self, addr, value):
     if addr < 0x0 or addr > 0x9FFF:
