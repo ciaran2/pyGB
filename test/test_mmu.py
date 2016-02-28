@@ -1,5 +1,6 @@
 import unittest
 
+from gb.mem import *
 from gb.mmu import *
 
 class TestMmuMethods(unittest.TestCase):

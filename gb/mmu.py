@@ -11,7 +11,7 @@ class Mmu(object):
     self.oam = oam
     self.io = io
 
-    self.cartridge = DummyCartridge()
+    self.cartridge = Cartridge()
 
     self.in_bios = True
 
@@ -80,4 +80,4 @@ class Mmu(object):
     self.cartridge = cartridge
 
   def unload_cartridge(self, cartridge):
-    self.cartridge = DummyCartridge()
+    self.cartridge = Cartridge()
