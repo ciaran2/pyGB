@@ -35,6 +35,11 @@ class CartridgeMeta(type):
 
 @six.add_metaclass(CartridgeMeta)
 class Cartridge(object):
+  """Base class for Cartridges. Calling the Cartridge constructor with a romstring
+  automatically constructs the appropriate child class, if a child class exists which has
+  the cartridge type id in its "ids" variable.
+
+  """
 
   def __new__(cls, romstring=b''):
     """Instantiate the appropriate cartridge subtype automatically, given the romstring. If
