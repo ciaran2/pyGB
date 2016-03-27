@@ -6,7 +6,7 @@ REG_E = 0b011
 REG_H = 0b100
 REG_L = 0b101
 
-class cpu:
+class Cpu(object):
   def __init__(self, mmu):
     self.mmu = mmu
 

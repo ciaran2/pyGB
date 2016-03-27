@@ -17,4 +17,8 @@ setup(
   long_description=read("README.md"),
   packages=["gb"],
   test_suite="test",
+  install_requires=[
+    # Python 2/3 compatibility:
+    "six",
+  ],
 )
