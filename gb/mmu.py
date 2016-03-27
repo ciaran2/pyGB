@@ -1,7 +1,7 @@
 from gb.mem import *
 from gb.cartridge import *
 
-class Mmu:
+class Mmu(object):
   def __init__(self, bios, vram, oam, io):
     self.wram = bytearray(0xE000 - 0xC000)
     self.zram = bytearray(0x10000 - 0xFF80)
@@ -11,7 +11,7 @@ class Mmu:
     self.oam = oam
     self.io = io
 
-    self.cartridge = DummyCartridge()
+    self.cartridge = Cartridge()
 
     self.in_bios = True
 
@@ -80,4 +80,4 @@ class Mmu:
     self.cartridge = cartridge
 
   def unload_cartridge(self, cartridge):
-    self.cartridge = DummyCartridge()
+    self.cartridge = Cartridge()
